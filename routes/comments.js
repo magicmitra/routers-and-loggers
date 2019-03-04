@@ -17,11 +17,18 @@ const router = express.Router();
 
 // read a comment
 router.get('/', (req, res) => {
-    const comments = db.get('comments')
-        .value();
+    //console.log(req.query); -> req.query for filter
+    let comments = db.get('comments').value();
+    if(req.query.filter){
+        const filterText = req.query.filter;
+        comments = comments.filter(comment => comment.text.toLowerCase()
+        .includes(filterText.toLowerCase()));
+    }
     res.json(comments);
 });
-  
+
+// GET /comments/filter="your text"
+
 router.get('/:id', (req, res) => {
     const myComment = db.get('comments')
         .find({id: req.params.id})
