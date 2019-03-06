@@ -43,34 +43,21 @@ router.get('/:id', (req, res) => {
 
 // create a comment
 router.post('/', (req, res) => {
-    // creat a new comment with the text
-    // timestamp
-    // id use shortid
-    // add it to commentData
-    // return all comments (make sure the new comment is included)
-    // BONUS: if request has no body text (or text 
-    // is empty) send proper error code and message
-    // res.json(req.body);
-    // console.log(req.body);
+    if(!req.body.text){
+        return res.status(404).json({msg: `Invalid syntax, provide text`});
+    }
 
-    const commentBody = req.body.text;
-    //const commentTime = `${moment()}`;
-    const commentTime = moment().format();
-    const commentId = shortid.generate();
-    commentData.push({
-        text: commentBody,
-        id: commentId,
-        timestamp: commentTime
-    })
+    const newComment = {
+        text: req.body.text,
+        id: shortid.generate(),
+        timestamp: moment().format(),
+    };
 
     db.get('comments')
-        .push(commentData)
+        .push(newComment)
         .write();
-    res.status(201).json({
-        msg: `comment successfully added`,
-        comments: db.get('comments').value()
-    });
-    console.log(commentData);
+
+    res.status(201).json({msg: 'Comment Successfully added', comments: db.get('comments').value()});
 })
 
 // update a comment
